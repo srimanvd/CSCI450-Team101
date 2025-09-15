@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+url_file="${1:-}"
+if [[ -z "$url_file" ]]; then
+  echo "Usage: ./run /abs/path/to/URL_FILE" >&2
+  exit 2
+fi
+if [[ ! -f "$url_file" ]]; then
+  echo "Error: URL file not found: $url_file" >&2
+  exit 1
+fi
+
+awk '
+function trim(s){ sub(/^[ \t\r\n]+/,"",s); sub(/[ \t\r\n]+$/,"",s); return s }
+{
+  line=trim($0)
+  if (line ~ /^#/ || line == "") next
+  print line
+}
+' "$url_file"
