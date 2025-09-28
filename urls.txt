@@ -1,2 +1,7 @@
+https://github.com/huggingface/transformers
+https://huggingface.co/google-bert/bert-base-uncased
+https://huggingface.co/datasets/squad
+https://huggingface.co/datasets/imagenet-1k
 https://huggingface.co/facebook/opt-125m
-https://github.com/pallets/flask
+https://huggingface.co/Qwen/Qwen3-Omni-30B-A3B-Instruct
+https://huggingface.co/Qwen/Qwen3-8B
