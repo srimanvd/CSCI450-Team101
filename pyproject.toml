@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trustworthy-cli"
+version = "0.1.0"
+requires-python = ">=3.9"
+dependencies = [
+  "huggingface_hub>=0.24",
+  "requests>=2.31",
+  "PyGithub>=2.3.0",
+  "gitpython>=3.1",
+  "typing_extensions>=4.12",
+  "mypy>=1.10",
+  "flake8>=7.0",
+  "isort>=5.13",
+  "coverage>=7.6",
+  "pytest>=8.2",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.isort]
+profile = "black"
+
+[tool.flake8]
+max-line-length = 100
+
+[tool.mypy]
+strict = true
+python_version = "3.9"
+
+[tool.pytest.ini_options]
+addopts = "--cov=core --cov=metrics --cov-report=term --no-header"

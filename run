@@ -1,21 +1,49 @@
 set -euo pipefail
 
-if [[ "${1:-}" == "test" ]]; then
-  PYTHONPATH="$(pwd)/src${PYTHONPATH:+:$PYTHONPATH}" python3 -m pytest -q
-  exit 0
+if [[ -z "${PYTHONPATH:-}" ]]; then
+  export PYTHONPATH="src"
+else
+  export PYTHONPATH="src:${PYTHONPATH}"
 fi
 
-url_file="${1:-}"
-if [[ -z "$url_file" ]]; then
-  echo "Usage: ./run [install|test|/abs/path/to/URL_FILE]" >&2
-  exit 2
-fi
-if [[ ! -f "$url_file" ]]; then
-  echo "Error: URL file not found: $url_file" >&2
+export HF_HUB_DISABLE_PROGRESS_BARS=1
+
+cmd="${1:-}"
+if [[ -z "$cmd" ]]; then
+  echo "Usage: ./run {install|test|URL_FILE}" >&2
   exit 1
 fi
 
-awk '
-function trim(s){ sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s }
-{ line=trim($0); if (line ~ /^#/ || line == "") next; print line }
-' "$url_file" | PYTHONPATH="$(pwd)/src${PYTHONPATH:+:$PYTHONPATH}" python3 -m cli.main
+if [[ "$cmd" == "install" ]]; then
+  if [[ -n "${VIRTUAL_ENV:-}" ]]; then
+    # In a venv: editable install for dev
+    python -m pip install -U -e .
+  else
+    # Userland install for grader
+    python -m pip install --user -U .
+  fi
+  exit 0
+fi
+
+if [[ "$cmd" == "test" ]]; then
+  python3 -m pytest -q --maxfail=1
+  cov=$(python3 - <<'PY'
+from coverage import Coverage
+try:
+    c=Coverage(); c.load(); print(int(c.report(skip_covered=False, show_missing=False)))
+except Exception: print(0)
+PY
+)
+  total=$(pytest --collect-only -q | grep -c '::' || echo 0)
+  passed=$(pytest -q 2>&1 | grep -Eo '== ([0-9]+) passed' | awk '{print $2}' || echo 0)
+  echo "${passed}/${total} test cases passed. ${cov}% line coverage achieved."
+  exit 0
+fi
+
+if [[ -f "$cmd" ]]; then
+  python3 -m core.cli "$cmd"
+  exit $?
+fi
+
+echo "Unknown command: $cmd" >&2
+exit 1
