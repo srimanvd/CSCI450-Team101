@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
-from urllib.parse import urlparse
 from typing import Optional
+from urllib.parse import urlparse
+
 
 @dataclass(frozen=True)
 class ParsedURL:
@@ -10,6 +12,7 @@ class ParsedURL:
     owner: Optional[str]
     name: Optional[str]
 
+
 def parse_url(u: str) -> ParsedURL:
     p = urlparse(u.strip())
     host = p.netloc.lower()
@@ -17,15 +20,19 @@ def parse_url(u: str) -> ParsedURL:
     if host in {"huggingface.co", "www.huggingface.co"}:
         parts = [x for x in p.path.split("/") if x]
         if parts and parts[0] == "datasets":
-            if len(parts) >= 3: return ParsedURL(u, "hf_dataset", parts[1], parts[2])
-            if len(parts) == 2: return ParsedURL(u, "hf_dataset", None, parts[1])
+            if len(parts) >= 3:
+                return ParsedURL(u, "hf_dataset", parts[1], parts[2])
+            if len(parts) == 2:
+                return ParsedURL(u, "hf_dataset", None, parts[1])
             return ParsedURL(u, "other", None, None)
-        if len(parts) >= 2: return ParsedURL(u, "hf_model", parts[0], parts[1])
+        if len(parts) >= 2:
+            return ParsedURL(u, "hf_model", parts[0], parts[1])
         return ParsedURL(u, "other", None, None)
 
     if host in {"github.com", "www.github.com"}:
         parts = [x for x in p.path.split("/") if x]
-        if len(parts) >= 2: return ParsedURL(u, "github", parts[0], parts[1])
+        if len(parts) >= 2:
+            return ParsedURL(u, "github", parts[0], parts[1])
         return ParsedURL(u, "other", None, None)
 
     return ParsedURL(u, "other", None, None)

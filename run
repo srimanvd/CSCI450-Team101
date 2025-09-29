@@ -15,13 +15,8 @@ if [[ -z "$cmd" ]]; then
 fi
 
 if [[ "$cmd" == "install" ]]; then
-  if [[ -n "${VIRTUAL_ENV:-}" ]]; then
-    # In a venv: editable install for dev
-    python -m pip install -U -e .
-  else
-    # Userland install for grader
-    python -m pip install --user -U .
-  fi
+  python3 -m pip install --user -U pip
+  python3 -m pip install --user -U .
   exit 0
 fi
 
