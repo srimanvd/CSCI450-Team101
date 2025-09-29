@@ -7,19 +7,20 @@ from typing import Any, Dict
 
 from .base import MetricResult
 
-# Optional provider import (note: providers plural)
+# Import provider module safely (no unused names; avoids flake8/mypy issues)
 try:
-    from providers.purdue_genai import (  # type: ignore
-        PurdueGenAIError,
-        score_ramp_up_with_llm,
-    )
+    from providers import purdue_genai
+    _score_ramp_up_with_llm = purdue_genai.score_ramp_up_with_llm
 except Exception:  # pragma: no cover
-    score_ramp_up_with_llm = None  # type: ignore
+    _score_ramp_up_with_llm = None  # type: ignore[assignment]
 
 FENCED_CODE = re.compile(r"```[a-zA-Z0-9_-]*\s+[\s\S]+?```", re.I)
 QUICKSTART_HINT = re.compile(r"\b(quick\s*start|getting\s*started|usage|example[s]?)\b", re.I)
 INSTALL_HINT = re.compile(
-    r"(?:^|\n)\s*(?:pip(?:3)?|conda|poetry)\s+install[^\n]*|requirements\.txt|pyproject\.toml|environment\.yml|setup\.py",
+    (
+        r"(?:^|\n)\s*(?:pip(?:3)?|conda|poetry)\s+install[^\n]*"
+        r"|requirements\.txt|pyproject\.toml|environment\.yml|setup\.py"
+    ),
     re.I,
 )
 CODE_EXAMPLE_HINT = re.compile(
@@ -34,7 +35,7 @@ TOKENIZER_EXTS = (".json", ".model")
 
 
 def _has_any_env_key() -> bool:
-    return bool(os.getenv("GEN_AI_STUDIO_API_KEY") or os.getenv("PURDUE_GENAISTUDIO_API_KEY"))
+    return bool(os.getenv("GEN_AI_STUDIO_API_KEY"))
 
 
 class AvailabilityMetric:
@@ -94,9 +95,9 @@ class AvailabilityMetric:
         }
 
         final = score
-        if _has_any_env_key() and (score_ramp_up_with_llm is not None) and readme.strip():
+        if _has_any_env_key() and (_score_ramp_up_with_llm is not None) and readme.strip():
             try:
-                llm_score, llm_detail = score_ramp_up_with_llm(
+                llm_score, llm_detail = _score_ramp_up_with_llm(
                     readme_text=readme,
                     meta={
                         "files": files[:40],

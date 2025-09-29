@@ -59,7 +59,6 @@ def compute_one(u: str, datasets: List[str] | None, code: List[str] | None) -> D
         r = m.compute(ctx)
         return (m.name, r, r.extras or {})
 
-    # Build typed thunks instead of inline lambdas (mypy-friendly)
     funcs: List[Callable[[], Tuple[str, MetricResult, Dict[str, Any]]]] = []
 
     def _make_thunk(m: Any) -> Callable[[], Tuple[str, MetricResult, Dict[str, Any]]]:
@@ -160,7 +159,7 @@ def compute_one(u: str, datasets: List[str] | None, code: List[str] | None) -> D
     return {k: v for k, v in row.items() if k in allowed}
 
 
-def collate(urls: Iterable[str]) -> Iterable[dict]:
+def collate(urls: Iterable[str]) -> Iterable[Dict[str, Any]]:
     ds_stack: List[str] = []
     code_stack: List[str] = []
     pending: List[Tuple[str, List[str], List[str]]] = []
