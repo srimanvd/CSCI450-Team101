@@ -2,3 +2,4 @@ huggingface_hub>=0.24
 requests>=2.32
 pytest>=8.0
 dulwich>=0.21
+requests>=2.31

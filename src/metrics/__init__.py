@@ -1,14 +1,17 @@
-from .base import Metric, MetricResult
 from .availability import AvailabilityMetric
-from .license import LicenseMetric
-from .size import SizeMetric
+from .base import Metric, MetricResult
+from .bus_factor import BusFactorMetric
+from .code_quality import CodeQualityMetric
 from .dataset_code import DatasetCodePresenceMetric
 from .dataset_quality import DatasetQualityMetric
-from .code_quality import CodeQualityMetric
+from .license import LicenseMetric
 from .performance_claims import PerformanceClaimsMetric
-from .bus_factor import BusFactorMetric
+from .size import SizeMetric
 
-def metric_registry():
+__all__ = ["Metric", "MetricResult", "metric_registry"]
+
+
+def metric_registry() -> list[Metric]:
     return [
         AvailabilityMetric(),
         LicenseMetric(),
