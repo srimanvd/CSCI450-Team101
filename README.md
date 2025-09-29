@@ -1,4 +1,4 @@
-# trustworthy-cli
+# CSCI450-Team101 - trustworthyCLI
 A command-line interface for assessing the trustworthiness and quality of open-source AI models.
 
 ## Collaborators
