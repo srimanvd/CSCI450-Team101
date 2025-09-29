@@ -27,7 +27,7 @@ def _extract_hf_license(info: Any) -> str | None:
     if v:
         return v
 
-    for t in (getattr(info, "tags", []) or []):
+    for t in getattr(info, "tags", []) or []:
         if isinstance(t, str) and t.lower().startswith("license:"):
             vv = ok(t.split(":", 1)[1])
             if vv:

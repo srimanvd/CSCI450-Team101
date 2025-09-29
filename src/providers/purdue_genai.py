@@ -82,7 +82,7 @@ def score_ramp_up_with_llm(readme_text: str, meta: Optional[Dict[str, Any]] = No
         start = content.find("{")
         end = content.rfind("}")
         if start != -1 and end != -1 and end > start:
-            obj = json.loads(content[start : end + 1])  # no spaces around ':' to satisfy flake8 E203
+            obj = json.loads(content[start:end + 1])  # no whitespace before colon, satisfies flake8 E203
         else:
             raise PurdueGenAIError("GenAI returned non-JSON content.")
 
